@@ -5,7 +5,7 @@
 2. if it is empty, fetch data from REDCap using its API (Application Programming Interface).
 3. and pushing the data from REDCap creating issues on Github (title, body, labels).
 
-### Instruction:
+### Instructions:
 1. Install python3. to install python3 please visit (https://pip.pypa.io/en/stable/installation/).
 3. install JSON (Pip install json)
 4. install Request (pip install requests)
