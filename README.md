@@ -7,5 +7,5 @@
 
 ### Instructions:
 1. Install python3. to install python3 please visit (https://pip.pypa.io/en/stable/installation/).
-3. install JSON (Pip install json)
-4. install Request (pip install requests)
+3. Install JSON (Pip install json)
+4. Install Request (pip install requests)
