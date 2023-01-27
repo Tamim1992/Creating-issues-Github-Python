@@ -5,7 +5,7 @@ import json
 # Git hub data 
 owner = "Missouri-BMI"
 repo = "Demo"
-myToken = 'ghp_OTFQeM6ypaKvzlGv1CagAq0RhGATTj2alPJ2'
+myToken = 'ghp_OTFQeM6ypaKvzlGv1CagAq0RhGATTj'
 myUrl = f'https://api.github.com/repos/{owner}/{repo}/issues?state=Open'
 head = {'Authorization': 'token {}'.format(myToken)}
 r = requests.get(myUrl, headers=head)
