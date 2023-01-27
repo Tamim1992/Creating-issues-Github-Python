@@ -5,7 +5,7 @@ import json
 # Git hub data 
 owner = "Missouri-BMI"
 repo = "Demo"
-myToken = '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'
+myToken = 'ghp_OTFQeM6ypaKvzlGv1CagAq0RhGATTj2alPJ2'
 myUrl = f'https://api.github.com/repos/{owner}/{repo}/issues?state=Open'
 head = {'Authorization': 'token {}'.format(myToken)}
 r = requests.get(myUrl, headers=head)
@@ -33,7 +33,7 @@ print(len(issue_data))
 #fetching data from REDCAP
 
 data = {
-    'token': '9D08561FC9245E68E890E7AFCB68ABD3',
+    'token': '',
     'content': 'record',
     'action': 'export',
     'format': 'json',
