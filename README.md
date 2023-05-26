@@ -1,11 +1,11 @@
 # Creating-issues-Github-Pythong
 ## In this program we used python programming language to make the process of creating issues dynamic.
 
-1. We are fetching data from Repo (Github).
-2. if it is empty, fetch data from REDCap using its API (Application Programming Interface).
-3. and pushing the data from REDCap creating issues on Github (title, body, labels).
+* We are fetching data from Repo (Github).
+* if it is empty, fetch data from REDCap using its API (Application Programming Interface).
+* and pushing the data from REDCap creating issues on Github (title, body, labels).
 
 ### Instructions:
-1. Install python3. to install python3 please visit (https://pip.pypa.io/en/stable/installation/).
-3. Install JSON (Pip install json)
-4. Install Request (pip install requests)
+* Install python3. to install python3 please visit (https://pip.pypa.io/en/stable/installation/).
+* Install JSON (Pip install json)
+* Install Request (pip install requests)
