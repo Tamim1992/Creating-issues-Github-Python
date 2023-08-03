@@ -1,85 +1,66 @@
-
 import requests
 import json
 
-# Git hub data 
-owner = "Missouri-BMI"
-repo = "Demo"
-myToken = 'ghp_OTFQeM6ypaKvzlGv1CagAq0RhGATTj'
-myUrl = f'https://api.github.com/repos/{owner}/{repo}/issues?state=Open'
-head = {'Authorization': 'token {}'.format(myToken)}
-r = requests.get(myUrl, headers=head)
+GITHUB_API = 'https://api.github.com'
+GITHUB_OWNER = "Mi-BI"
+GITHUB_REPO = "Demo"
+GITHUB_TOKEN = 'ghp_OTFQeM6ypaKvzlGv1CagAq0'
+REDCAP_API = 'https://showmeportal.missouri.edu/redcap/api/'
 
-
-def call_api(apicall, header, **kwargs):
-    data = kwargs.get('page', [])
-
-    resp = requests.get(apicall, headers=header)
-    data += resp.json()
-
-    # failsafe
-    if len(data) > 500:
-        return (data)
-
-    if 'next' in resp.links.keys():
-        return (call_api(resp.links['next']['url'], header, page=data))
-
-    return (data)
-
-
-issue_data = call_api(myUrl, head)
-print(len(issue_data))
-
-#fetching data from REDCAP
-
-data = {
-    'token': '',
-    'content': 'record',
-    'action': 'export',
-    'format': 'json',
-    'type': 'flat',
-    'csvDelimiter': '',
-    'rawOrLabel': 'raw',
-    'rawOrLabelHeaders': 'raw',
-    'exportCheckboxLabel': 'false',
-    'exportSurveyFields': 'false',
-    'exportDataAccessGroups': 'false',
-    'returnFormat': 'json'
+HEADERS = {
+    'Authorization': f'token {GITHUB_TOKEN}'
 }
-r = requests.post('https://showmeportal.missouri.edu/redcap/api/',data=data)
-print('HTTP Status: ' + str(r.status_code))
-my_dict = r.json()
 
+def get_issues():
+    url = f'{GITHUB_API}/repos/{GITHUB_OWNER}/{GITHUB_REPO}/issues?state=open'
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code!= 200:
+        raise Exception(f Request failed with status {response.status_code}")
+    return response.json()
 
-#CREATEING ISSUES IN GITHUB
-url = "https://api.github.com/repos/{}/{}/issues".format(owner, repo)
+def get_redcap_data():
+    payload = {
+        'token': '',
+        'content': 'record',
+        'action': 'export',
+        'format': 'json',
+        'type': 'flat',
+        'csvDelimiter': '',
+        'rawOrLabel': 'raw',
+        'rawOrLabelHeaders': 'raw',
+        'exportCheckboxLabel': 'false',
+        'exportSurveyFields': 'false',
+        'exportDataAccessGroups': 'false',
+        'returnFormat': 'json'
+    }
+    response = requests.post(REDCAP_API, data=payload)
+    print('HTTP Status: ' + str(response.status_code))
+    if response.status_code!= 200:
+        raise Exception(f"Request failed with status {response.status_code}")
+    return response.json()
 
-if len(issue_data) == 0:
-    for item1 in my_dict:
-        rc_name = item1['full_name']
-        rc_req_id = item1['issue_id']
-        rc_req_title = item1['request_title']
-        rc_pb_desc = item1['prob_desc']
-        rc_issue_type =item1['issue_type']
-        rc_label = item1['email_address']
-        datas = {"title": str(rc_req_id) + " " + str(rc_req_title), "body": str(rc_pb_desc) + '\n' + " " + '\n' + "Fullname: " + str(rc_name) + '\n' + "Email: " + str(rc_label) + '\n' + "Issue_Type: " + str(rc_issue_type), "labels": [rc_label]}
-        requests.post(url, data=json.dumps(datas), headers=head)
-else:
-    for item1 in my_dict:
-        rc_name = item1['full_name']
-        rc_req_id = item1['issue_id']
-        rc_req_title = item1['request_title']
-        rc_pb_desc = item1['prob_desc']
-        rc_issue_type =item1['issue_type']
-        rc_label = item1['email_address']
-        datas = {"title": str(rc_req_id) + " " + str(rc_req_title), "body": str(rc_pb_desc) + '\n' + "Fullname: " + str(rc_name) + '\n' + "Email: " + str(rc_label) + '\n' + "Issue_Type: " + str(rc_issue_type), "labels": [rc_label]}
-        flag = False
-        for item in issue_data:
-            if item["title"] == str(rc_req_id) + " " + str(rc_req_title):
-                flag = True
-                print("It is alreay Exist!")
+def post_issue(issue):
+    url = f"{GITHUB_API}/repos/{GITHUB_OWNER}/{GITHUB_REPO}/issues"
+    response = requests.post(url, data=json.dumps(issue), headers=HEADERS)
+    if response.status_code != 201:
+        raise Exception(f"Issue creation failed with status {response.status_code}")
 
-        if flag==False:
-            requests.post(url, data=json.dumps(datas), headers=head)
+def create_issues():
+    issue_data = get_issues()
+    redcap_data = get_redcap_data()
 
-print("Creating Issues")
+    for item in redcap_data:
+        issue_title = f"{item['issue_id']} {item['request_title']}"
+        issue_body = f"{item['prob_desc']}\nFullname: {item['full_name']}\nEmail: {item['email_address']}\nIssue_Type: {item['issue_type']}"
+        labels = [item['email_address']]
+        issue = {"title": issue_title, "body": issue_body, "labels": labels}
+
+        if any(existing_issue["title"] == issue_title for existing_issue in issue_data):
+            print(f"Issue '{issue_title}' already exists!")
+        else:
+            post_issue(issue)
+
+    print("Issues created")
+
+if __name__ == "__main__":
+    create_issues()
