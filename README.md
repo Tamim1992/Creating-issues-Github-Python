@@ -18,7 +18,7 @@ This project leverages Python to automate the process of creating issues in a Gi
 ### Installation
 1. Clone this repository:
     ```bash
-    git clone https://github.com/yourusername/Demo.git
+    git clone [https://github.com/yourusername/Demo.git](https://github.com/Tamim1992/Github-Redcap-Issue-Integration.git)
     cd Demo
     ```
 
